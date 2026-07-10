@@ -22,7 +22,7 @@ import type { JsonDiffResult } from '@/utils/json'
 const oldJson = ref('{"name":"檬橙IT工具箱","version":"1.0.0","features":["变量名转换","文本比较"],"author":{"name":"mengch"}}')
 
 // 新JSON：右侧输入的新JSON，默认提供示例数据
-const newJson = ref('{"name":"檬橙IT工具箱","version":"2.0.0","features":["变量名转换","文本比较","JSON美化"],"author":{"name":"mengch","email":"dev@mengch.com"}}')
+const newJson = ref('{"name":"檬橙IT工具箱","version":"2.0.0","features":["变量名转换","文本比较","JSON美化"],"author":{"name":"mengch","site":"it.mengch.cn"}}')
 
 // 原始JSON有效性校验
 const oldValid = computed(() => isValidJson(oldJson.value))
@@ -94,7 +94,7 @@ function clearRight() {
  */
 function resetExample() {
   oldJson.value = '{"name":"檬橙IT工具箱","version":"1.0.0","features":["变量名转换","文本比较"],"author":{"name":"mengch"}}'
-  newJson.value = '{"name":"檬橙IT工具箱","version":"2.0.0","features":["变量名转换","文本比较","JSON美化"],"author":{"name":"mengch","email":"dev@mengch.com"}}'
+  newJson.value = '{"name":"檬橙IT工具箱","version":"2.0.0","features":["变量名转换","文本比较","JSON美化"],"author":{"name":"mengch","site":"it.mengch.cn"}}'
 }
 
 /**

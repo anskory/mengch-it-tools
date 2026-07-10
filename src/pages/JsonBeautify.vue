@@ -18,7 +18,7 @@ import { Copy, Check, Trash2, RefreshCw, Minimize2, Maximize2 } from 'lucide-vue
 import { beautifyJson, minifyJson, isValidJson, getJsonError } from '@/utils/json'
 
 // 输入JSON：用户输入的JSON字符串，默认提供示例数据
-const inputJson = ref('{"name":"檬橙IT工具箱","version":"1.0.0","features":["变量名转换","文本比较","JSON美化","JSON对比","二维码生成","URL编码解码"],"author":{"name":"mengch","email":"dev@mengch.com"}}')
+const inputJson = ref('{"name":"檬橙IT工具箱","version":"1.0.0","features":["变量名转换","文本比较","JSON美化","JSON对比","二维码生成","URL编码解码"],"author":{"name":"mengch","email":"it.mengch.cn"}}')
 
 // 缩进空格数：用于JSON格式化时的缩进设置
 const indent = ref(2)
@@ -70,7 +70,7 @@ function clearInput() {
  * 重置为默认示例数据
  */
 function resetExample() {
-  inputJson.value = '{"name":"檬橙IT工具箱","version":"1.0.0","features":["变量名转换","文本比较","JSON美化","JSON对比","二维码生成","URL编码解码"],"author":{"name":"mengch","email":"dev@mengch.com"}}'
+  inputJson.value = '{"name":"檬橙IT工具箱","version":"1.0.0","features":["变量名转换","文本比较","JSON美化","JSON对比","二维码生成","URL编码解码"],"author":{"name":"mengch","site":"it.mengch.cn"}}'
 }
 
 /**

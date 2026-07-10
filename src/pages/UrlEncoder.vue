@@ -19,7 +19,7 @@ import { Copy, Check, Trash2, RefreshCw, ArrowRightLeft } from 'lucide-vue-next'
 import { encodeUrl, decodeUrl, encodeUrlFull, decodeUrlFull, isValidUrl } from '@/utils/url'
 
 // 输入文本：用户输入的URL，默认提供示例
-const inputText = ref('https://www.mengch.com/path?name=檬橙IT工具箱&type=test')
+const inputText = ref('https://it.mengch.cn/path?name=檬橙IT工具箱&type=test')
 
 // 当前模式：编码或解码
 const mode = ref<'encode' | 'decode'>('encode')
@@ -79,7 +79,7 @@ function clearInput() {
  * 重置为默认示例和配置
  */
 function resetExample() {
-  inputText.value = 'https://www.mengch.com/path?name=檬橙IT工具箱&type=test'
+  inputText.value = 'https://it.mengch.cn/path?name=檬橙IT工具箱&type=test'
   mode.value = 'encode'
   encodeType.value = 'component'
 }
