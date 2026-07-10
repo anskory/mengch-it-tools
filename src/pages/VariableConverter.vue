@@ -39,15 +39,29 @@ const results = computed(() => {
  */
 async function copyText(text: string, index: number) {
   try {
-    // 使用浏览器剪贴板API复制文本
-    await navigator.clipboard.writeText(text)
+    // 优先使用现代 Clipboard API
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text)
+    } else {
+      // 降级方案：使用 execCommand
+      const textarea = document.createElement('textarea')
+      textarea.value = text
+      textarea.style.position = 'fixed'
+      textarea.style.left = '-9999px'
+      textarea.style.top = '-9999px'
+      textarea.setAttribute('readonly', '')
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textarea)
+    }
     copiedIndex.value = index // 设置复制成功标记
     // 2秒后清除复制状态
     setTimeout(() => {
       copiedIndex.value = null
     }, 2000)
-  } catch {
-    console.error('复制失败')
+  } catch (err) {
+    console.error('复制失败', err)
   }
 }
 
