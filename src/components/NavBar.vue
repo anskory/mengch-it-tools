@@ -1,3 +1,8 @@
+/**
+ * 侧边栏导航组件
+ * 提供应用的导航菜单、主题切换和折叠展开功能
+ * 支持响应式设计，在移动端和桌面端有不同的展示方式
+ */
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -9,10 +14,22 @@ import { useTheme } from '@/composables/useTheme'
 
 const router = useRouter()
 const route = useRoute()
+// 主题切换功能，从组合式函数获取
 const { theme, toggleTheme } = useTheme()
+
+// 侧边栏折叠状态
 const isCollapsed = ref(false)
+
+// 当前展开的分类ID集合，默认全部展开
 const expandedCategories = ref<Set<string>>(new Set(['text-tools', 'data-tools', 'encoding-tools', 'generate-tools', 'db-tools']))
 
+/**
+ * 导航项接口定义
+ * @property name - 唯一标识符
+ * @property label - 显示标签
+ * @property icon - 图标组件
+ * @property path - 路由路径
+ */
 interface NavItem {
   name: string
   label: string
@@ -20,6 +37,13 @@ interface NavItem {
   path: string
 }
 
+/**
+ * 导航分类接口定义
+ * @property id - 分类唯一标识
+ * @property label - 分类显示标签
+ * @property icon - 分类图标组件
+ * @property items - 分类下的导航项数组
+ */
 interface NavCategory {
   id: string
   label: string
@@ -27,6 +51,10 @@ interface NavCategory {
   items: NavItem[]
 }
 
+/**
+ * 导航分类配置
+ * 按功能模块分组，包含文本工具、数据工具、编码工具、生成工具和数据库工具
+ */
 const categories: NavCategory[] = [
   {
     id: 'text-tools',
@@ -73,56 +101,74 @@ const categories: NavCategory[] = [
   },
 ]
 
+// 当前路由路径，用于高亮当前菜单项
 const currentPath = computed(() => route.path)
+
+// 判断是否在首页
 const isHome = computed(() => currentPath.value === '/')
 
+/**
+ * 导航到指定路径
+ * @param path - 目标路由路径
+ */
 function navigateTo(path: string) {
   router.push(path)
 }
 
+/**
+ * 切换分类的展开/折叠状态
+ * @param id - 分类ID
+ */
 function toggleCategory(id: string) {
   const next = new Set(expandedCategories.value)
   if (next.has(id)) {
+    // 如果已展开则折叠
     next.delete(id)
   } else {
+    // 如果已折叠则展开
     next.add(id)
   }
   expandedCategories.value = next
 }
 
+/**
+ * 切换侧边栏的折叠状态
+ */
 function toggleSidebar() {
   isCollapsed.value = !isCollapsed.value
 }
 </script>
 
 <template>
-  <!-- Mobile overlay -->
+  <!-- 移动端遮罩层，点击后关闭侧边栏 -->
   <div
     v-if="!isCollapsed"
     class="fixed inset-0 bg-black/30 z-40 lg:hidden"
     @click="isCollapsed = true"
   ></div>
 
-  <!-- Sidebar -->
+  <!-- 侧边栏主体 -->
   <aside
     :class="[
       'fixed left-0 top-0 bottom-0 z-50 bg-white dark:bg-dark-100 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 flex flex-col',
       isCollapsed ? '-translate-x-full lg:translate-x-0 lg:w-[64px]' : 'w-[240px]'
     ]"
   >
-    <!-- Logo area -->
+    <!-- Logo区域 -->
     <div
       :class="[
         'flex items-center border-b border-gray-200 dark:border-gray-700',
         isCollapsed ? 'h-[64px] justify-center px-2' : 'h-[64px] px-4 gap-3'
       ]"
     >
+      <!-- Logo图片，点击返回首页 -->
       <img
         src="/cv.png"
         alt="檬橙IT工具箱"
         class="w-8 h-8 rounded-lg object-cover flex-shrink-0 cursor-pointer"
         @click="navigateTo('/')"
       />
+      <!-- 应用标题，折叠时隐藏 -->
       <span
         v-if="!isCollapsed"
         class="text-base font-bold text-gray-800 dark:text-white truncate transition-opacity duration-300"
@@ -131,7 +177,7 @@ function toggleSidebar() {
       </span>
     </div>
 
-    <!-- Toggle button (desktop) -->
+    <!-- 折叠/展开按钮（仅桌面端显示） -->
     <button
       @click="toggleSidebar"
       :class="[
@@ -143,9 +189,9 @@ function toggleSidebar() {
       <ChevronLeft class="w-3 h-3 text-gray-500" />
     </button>
 
-    <!-- Nav content -->
+    <!-- 导航内容区域 -->
     <div class="flex-1 overflow-y-auto py-3">
-      <!-- Home -->
+      <!-- 首页按钮 -->
       <button
         @click="navigateTo('/')"
         :class="[
@@ -161,13 +207,13 @@ function toggleSidebar() {
         <span v-if="!isCollapsed" class="text-sm font-medium">首页</span>
       </button>
 
-      <!-- Categories -->
+      <!-- 工具分类列表 -->
       <div
         v-for="category in categories"
         :key="category.id"
         class="mt-1"
       >
-        <!-- Category header -->
+        <!-- 分类标题（未折叠状态） -->
         <button
           v-if="!isCollapsed"
           @click="toggleCategory(category.id)"
@@ -177,13 +223,14 @@ function toggleSidebar() {
             <component :is="category.icon" class="w-4 h-4" />
             {{ category.label }}
           </div>
+          <!-- 展开/折叠箭头指示器 -->
           <ChevronDown
             class="w-3 h-3 transition-transform duration-200"
             :class="expandedCategories.has(category.id) ? 'rotate-180' : ''"
           />
         </button>
 
-        <!-- Collapsed category icon only -->
+        <!-- 分类图标（折叠状态） -->
         <div
           v-else
           class="flex justify-center py-3 text-gray-400 dark:text-gray-500"
@@ -192,7 +239,7 @@ function toggleSidebar() {
           <component :is="category.icon" class="w-5 h-5" />
         </div>
 
-        <!-- Category items -->
+        <!-- 分类下的工具项列表（未折叠状态） -->
         <div
           v-if="!isCollapsed"
           class="overflow-hidden transition-all duration-200"
@@ -217,7 +264,7 @@ function toggleSidebar() {
           </button>
         </div>
 
-        <!-- Collapsed: show active item dot -->
+        <!-- 折叠状态下显示为圆点指示器 -->
         <div v-else class="flex flex-col items-center gap-1 py-1">
           <div
             v-for="item in category.items"
@@ -235,13 +282,14 @@ function toggleSidebar() {
       </div>
     </div>
 
-    <!-- Bottom actions -->
+    <!-- 底部操作区域 -->
     <div
       :class="[
         'border-t border-gray-200 dark:border-gray-700',
         isCollapsed ? 'p-2 flex flex-col items-center gap-2' : 'p-3 flex items-center gap-2'
       ]"
     >
+      <!-- 主题切换按钮 -->
       <button
         @click="toggleTheme"
         :class="[
@@ -251,6 +299,7 @@ function toggleSidebar() {
         ]"
         :title="isCollapsed ? (theme === 'light' ? '切换到深色' : '切换到浅色') : ''"
       >
+        <!-- 根据当前主题显示对应的图标 -->
         <Sun v-if="theme === 'dark'" class="w-5 h-5" />
         <Moon v-else class="w-5 h-5" />
         <span v-if="!isCollapsed" class="text-sm">{{ theme === 'light' ? '深色模式' : '浅色模式' }}</span>
@@ -258,7 +307,7 @@ function toggleSidebar() {
     </div>
   </aside>
 
-  <!-- Mobile hamburger (when sidebar collapsed) -->
+  <!-- 移动端汉堡菜单按钮（侧边栏折叠时显示） -->
   <button
     v-if="isCollapsed"
     @click="isCollapsed = false"

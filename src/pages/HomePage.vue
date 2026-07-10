@@ -1,7 +1,22 @@
+<!--
+  首页组件
+  
+  功能描述：
+  - 展示檬橙IT工具箱的主页界面
+  - 显示工具列表卡片，提供快速导航入口
+  - 展示工具集的基本信息和特性说明
+  
+  作者：mengch
+  创建时间：2024
+-->
 <script setup lang="ts">
+// 引入图标组件，用于工具卡片展示
 import { Code2, GitCompare, FileJson, QrCode, Link, Sparkles } from 'lucide-vue-next'
+// 引入工具卡片组件
 import ToolCard from '@/components/ToolCard.vue'
 
+// 工具列表配置数据
+// 每个工具项包含：图标、标题、描述和路由路径
 const tools = [
   {
     icon: Code2,
@@ -43,22 +58,28 @@ const tools = [
 </script>
 
 <template>
+  <!-- 主容器：渐变背景，响应式高度 -->
   <div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-dark-300 dark:via-dark-200 dark:to-dark-300">
+    <!-- 头部区域：标题和简介 -->
     <section class="pt-8 pb-16 px-4 sm:px-6 lg:px-8">
       <div class="max-w-4xl mx-auto text-center">
+        <!-- 徽章：标识工具集特点 -->
         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-sm font-medium mb-6">
           <Sparkles class="w-4 h-4" />
           <span>开发者必备工具集</span>
         </div>
         
+        <!-- 主标题 -->
         <h1 class="text-4xl sm:text-5xl font-bold text-gray-800 dark:text-white mb-6">
           檬橙IT工具箱
         </h1>
         
+        <!-- 副标题：工具集简介 -->
         <p class="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-8">
           一站式解决开发过程中的常见文本处理需求，提高你的工作效率
         </p>
         
+        <!-- 特性标签：工具数量、免费、离线 -->
         <div class="flex flex-wrap justify-center gap-4">
           <div class="px-4 py-2 bg-white dark:bg-dark-100 rounded-lg border border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400">
             <span class="text-primary-500 font-semibold">6+</span> 实用工具
@@ -73,8 +94,10 @@ const tools = [
       </div>
     </section>
 
+    <!-- 工具列表区域 -->
     <section class="px-4 sm:px-6 lg:px-8 pb-16">
       <div class="max-w-7xl mx-auto">
+        <!-- 区域标题 -->
         <div class="text-center mb-12">
           <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white mb-4">
             工具列表
@@ -84,7 +107,9 @@ const tools = [
           </p>
         </div>
 
+        <!-- 工具卡片网格：响应式布局 -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- 循环渲染工具卡片 -->
           <ToolCard
             v-for="tool in tools"
             :key="tool.title"
@@ -97,11 +122,14 @@ const tools = [
       </div>
     </section>
 
+    <!-- 页脚区域：备案信息和隐私说明 -->
     <footer class="border-t border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-dark-200/50 backdrop-blur-sm">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="text-center text-sm text-gray-500 dark:text-gray-400">
           <p>檬橙IT工具箱 - 让开发更高效</p>
+          <!-- 隐私提示：强调数据本地处理 -->
           <p class="mt-2">所有功能均在本地浏览器中运行，数据不会上传到服务器</p>
+          <!-- 备案信息 -->
           <p class="mt-3">
             <a
               href="https://beian.miit.gov.cn/"

@@ -1,13 +1,18 @@
+/**
+ * 应用入口文件
+ * 负责创建和挂载Vue应用实例，并注册全局插件
+ */
+
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 import router from './router'
 
-// 创建Vue应用实例
+// 创建Vue应用实例，传入根组件
 const app = createApp(App)
 
-// 使用路由
+// 注册路由插件，使应用支持路由功能
 app.use(router)
 
-// 挂载应用
+// 将应用挂载到DOM中id为'app'的元素上
 app.mount('#app')
