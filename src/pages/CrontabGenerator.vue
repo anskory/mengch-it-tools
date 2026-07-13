@@ -127,10 +127,25 @@ const copied = ref(false)
  */
 async function copyExpression() {
   try {
-    await navigator.clipboard.writeText(cronExpression.value)
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(cronExpression.value)
+    } else {
+      const textarea = document.createElement('textarea')
+      textarea.value = cronExpression.value
+      textarea.style.position = 'fixed'
+      textarea.style.left = '-9999px'
+      textarea.style.top = '-9999px'
+      textarea.setAttribute('readonly', '')
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textarea)
+    }
     copied.value = true
     setTimeout(() => copied.value = false, 2000)
-  } catch {}
+  } catch (err) {
+    console.error('复制失败', err)
+  }
 }
 
 /**

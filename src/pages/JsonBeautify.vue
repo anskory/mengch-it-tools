@@ -52,11 +52,26 @@ const outputJson = computed(() => {
  */
 async function copyOutput() {
   try {
-    await navigator.clipboard.writeText(outputJson.value)
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(outputJson.value)
+    } else {
+      const textarea = document.createElement('textarea')
+      textarea.value = outputJson.value
+      textarea.style.position = 'fixed'
+      textarea.style.left = '-9999px'
+      textarea.style.top = '-9999px'
+      textarea.setAttribute('readonly', '')
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textarea)
+    }
     copied.value = true
     // 2秒后清除复制状态
     setTimeout(() => copied.value = false, 2000)
-  } catch {}
+  } catch (err) {
+    console.error('复制失败', err)
+  }
 }
 
 /**
