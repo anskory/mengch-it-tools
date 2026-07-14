@@ -11,6 +11,7 @@ import VariableConverter from '@/pages/VariableConverter.vue'
 import TextDiff from '@/pages/TextDiff.vue'
 import JsonBeautify from '@/pages/JsonBeautify.vue'
 import JsonDiff from '@/pages/JsonDiff.vue'
+import JsonEscape from '@/pages/JsonEscape.vue'
 import QrCode from '@/pages/QrCode.vue'
 import UrlEncoder from '@/pages/UrlEncoder.vue'
 import InConditionGenerator from '@/pages/InConditionGenerator.vue'
@@ -48,6 +49,11 @@ const routes = [
     path: '/json-diff',
     name: 'json-diff',
     component: JsonDiff,
+  },
+  {
+    path: '/json-escape',
+    name: 'json-escape',
+    component: JsonEscape,
   },
   {
     path: '/qr-code',
