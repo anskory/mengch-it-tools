@@ -8,6 +8,15 @@ import './style.css'
 import App from './App.vue'
 import router from './router'
 
+// 在Vue应用挂载前初始化主题，避免首屏闪烁
+// 读取localStorage保存的主题偏好，或检测系统主题
+const savedTheme = localStorage.getItem('theme')
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+const initialTheme = savedTheme === 'dark' || savedTheme === 'light'
+  ? savedTheme
+  : (prefersDark ? 'dark' : 'light')
+document.documentElement.classList.add(initialTheme)
+
 // 创建Vue应用实例，传入根组件
 const app = createApp(App)
 

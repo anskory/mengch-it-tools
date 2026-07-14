@@ -403,7 +403,7 @@ function resetExample() {
             </div>
 
             <!-- 输出结果显示 -->
-            <div class="font-mono text-sm h-[200px] overflow-auto bg-gray-50 dark:bg-dark-200 rounded-lg p-4 whitespace-pre-wrap break-all">
+            <div class="font-mono text-sm h-[200px] overflow-auto bg-gray-50 dark:bg-dark-200 rounded-lg p-4 whitespace-pre-wrap break-all text-gray-800 dark:text-white">
               {{ outputText || '请输入数据生成IN条件' }}
             </div>
           </div>

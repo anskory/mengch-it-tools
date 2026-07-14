@@ -269,7 +269,7 @@ This is line 5`
           </div>
           
           <!-- 差异结果展示：使用等宽字体，可滚动 -->
-          <div class="font-mono text-sm h-[420px] overflow-auto bg-gray-50 dark:bg-dark-200 rounded-lg p-4">
+          <div class="font-mono text-sm h-[420px] overflow-auto bg-gray-50 dark:bg-dark-200 rounded-lg p-4 text-gray-800 dark:text-white">
             <!-- 循环渲染差异行 -->
             <template v-for="(line, index) in diffResult" :key="index">
               <!-- 删除行：红色背景，左侧红色边框 -->

@@ -212,7 +212,7 @@ function toggleViewMode() {
         </div>
         
         <!-- 输出结果显示：使用等宽字体，保留格式 -->
-        <div class="font-mono text-sm h-[300px] overflow-auto bg-gray-50 dark:bg-dark-200 rounded-lg p-4 whitespace-pre-wrap break-all">
+        <div class="font-mono text-sm h-[300px] overflow-auto bg-gray-50 dark:bg-dark-200 rounded-lg p-4 whitespace-pre-wrap break-all text-gray-800 dark:text-white">
           {{ outputJson || '请输入JSON数据' }}
         </div>
       </div>
