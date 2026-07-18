@@ -20,8 +20,20 @@ const { theme, themeOptions, setTheme } = useTheme()
 // 主题选择面板展开状态
 const showThemePanel = ref(false)
 
-// 侧边栏折叠状态
-const isCollapsed = ref(false)
+// 侧边栏折叠状态：移动端默认折叠，桌面端默认展开
+const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024
+const isCollapsed = ref(isMobile)
+
+// 监听窗口大小变化，自动适配移动端
+if (typeof window !== 'undefined') {
+  window.addEventListener('resize', () => {
+    const nowMobile = window.innerWidth < 1024
+    // 从桌面端切换到移动端时自动折叠
+    if (nowMobile && !isMobile) {
+      isCollapsed.value = true
+    }
+  })
+}
 
 // 当前展开的分类ID集合，默认全部展开
 const expandedCategories = ref<Set<string>>(new Set(['text-tools', 'data-tools', 'encoding-tools', 'generate-tools', 'db-tools']))
