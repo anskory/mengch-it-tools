@@ -14,7 +14,7 @@ export interface FieldNode {
 
 interface TreeNodeProps {
   node: FieldNode
-  selected: string[]
+  selected: Set<string>
   expanded: Set<string>
   keyword: string
   depth: number
@@ -47,7 +47,7 @@ const isVisible = computed(() => {
 })
 
 function isSelected(path: string): boolean {
-  return props.selected.includes(path)
+  return props.selected.has(path)
 }
 
 function getTypeIcon(type: string) {

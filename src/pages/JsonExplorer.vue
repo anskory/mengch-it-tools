@@ -27,12 +27,14 @@ const inputJson = ref('')
 const parseError = ref('')
 // 搜索关键词
 const searchKeyword = ref('')
-// 选中的路径列表
-const selectedPaths = ref<string[]>([])
+// 选中的路径集合（用 Set 保证 O(1) 查找，避免大数据量卡顿）
+const selectedPaths = ref<Set<string>>(new Set())
 // 复制状态
 const copied = ref(false)
 // 展开的节点路径集合
 const expandedPaths = ref<Set<string>>(new Set())
+// path -> FieldNode 的索引缓存，避免 getValueByPath 反复 JSON.parse
+const nodeIndex = new Map<string, FieldNode>()
 
 // 示例JSON
 const exampleJson = `{
@@ -85,7 +87,7 @@ function getValueType(val: any): string {
 }
 
 /**
- * 递归构建字段树
+ * 递归构建字段树，同时建立 path -> node 的索引缓存
  * @param data - 数据
  * @param path - 当前路径
  * @param key - 当前键名
@@ -98,6 +100,8 @@ function buildTree(data: any, path: string, key: string): FieldNode {
     type,
     value: data,
   }
+  // 建立索引，供 getValueByPath O(1) 查找
+  nodeIndex.set(path, node)
 
   if (type === 'object' && data !== null) {
     node.children = Object.entries(data).map(([k, v]) => {
@@ -122,6 +126,8 @@ const rootNode = computed<FieldNode | null>(() => {
   try {
     const parsed = JSON.parse(inputJson.value)
     parseError.value = ''
+    // 重新解析时清空旧索引，避免内存泄漏
+    nodeIndex.clear()
     return buildTree(parsed, '$', '$')
   } catch (e) {
     parseError.value = e instanceof Error ? e.message : 'JSON解析失败'
@@ -170,63 +176,39 @@ function toggleExpand(path: string) {
 }
 
 /**
- * 是否选中
+ * 是否选中（Set.has 为 O(1)，大数据量下不卡顿）
  */
 function isSelected(path: string): boolean {
-  return selectedPaths.value.includes(path)
+  return selectedPaths.value.has(path)
 }
 
 /**
  * 切换选中
  */
 function toggleSelect(path: string) {
-  const index = selectedPaths.value.indexOf(path)
-  if (index > -1) {
-    selectedPaths.value.splice(index, 1)
+  if (selectedPaths.value.has(path)) {
+    selectedPaths.value.delete(path)
   } else {
-    selectedPaths.value.push(path)
+    selectedPaths.value.add(path)
   }
+  // 触发响应式更新（Set 的增删不会自动触发）
+  selectedPaths.value = new Set(selectedPaths.value)
 }
 
 /**
- * 根据路径获取值
+ * 根据路径获取值（从索引缓存 O(1) 查找，不再反复 JSON.parse）
  */
 function getValueByPath(path: string): any {
-  if (!rootNode.value || path === '$') return rootNode.value?.value
-  // 将路径转换为可执行的访问
-  try {
-    // 替换 $. 为 data.，替换 [ 为 [
-    let expr = path
-      .replace(/^\$\./, '')
-      .replace(/^\$/, '')
-    if (!expr) return rootNode.value?.value
-
-    // 使用安全的方式访问
-    const keys: (string | number)[] = []
-    const parts = path.slice(2).split(/\.|\[|\]/).filter(Boolean)
-    for (const part of parts) {
-      if (/^\d+$/.test(part)) {
-        keys.push(parseInt(part))
-      } else {
-        keys.push(part)
-      }
-    }
-
-    let result: any = JSON.parse(inputJson.value)
-    for (const key of keys) {
-      if (result === null || result === undefined) return undefined
-      result = result[key]
-    }
-    return result
-  } catch {
-    return undefined
-  }
+  return nodeIndex.get(path)?.value
 }
 
-// 选中字段的结果
+// 选中字段的结果（限制渲染数量，避免大数据量 DOM 卡顿）
+const MAX_RENDER_RESULTS = 50
 const selectedResults = computed(() => {
-  if (selectedPaths.value.length === 0) return []
-  return selectedPaths.value.map(path => {
+  if (selectedPaths.value.size === 0) return []
+  const paths = Array.from(selectedPaths.value)
+  const renderPaths = paths.slice(0, MAX_RENDER_RESULTS)
+  return renderPaths.map(path => {
     const val = getValueByPath(path)
     return {
       path,
@@ -237,10 +219,16 @@ const selectedResults = computed(() => {
   })
 })
 
+// 选中字段总数（用于显示，不受渲染限制影响）
+const selectedCount = computed(() => selectedPaths.value.size)
+// 是否有被截断未渲染的结果
+const hasMoreResults = computed(() => selectedPaths.value.size > MAX_RENDER_RESULTS)
+
 // 单字段预览值
 const previewValue = computed(() => {
-  if (selectedPaths.value.length !== 1) return ''
-  const val = getValueByPath(selectedPaths.value[0])
+  if (selectedPaths.value.size !== 1) return ''
+  const path = Array.from(selectedPaths.value)[0]
+  const val = getValueByPath(path)
   if (typeof val === 'object') {
     return JSON.stringify(val, null, 2)
   }
@@ -282,7 +270,7 @@ function getTypeColorClass(type: string): string {
  */
 function loadExample() {
   inputJson.value = exampleJson
-  selectedPaths.value = []
+  selectedPaths.value = new Set()
   expandedPaths.value.clear()
   searchKeyword.value = ''
 }
@@ -292,7 +280,7 @@ function loadExample() {
  */
 function clearAll() {
   inputJson.value = ''
-  selectedPaths.value = []
+  selectedPaths.value = new Set()
   expandedPaths.value.clear()
   searchKeyword.value = ''
   parseError.value = ''
@@ -338,23 +326,24 @@ async function copyValue(val: string) {
 }
 
 /**
- * 复制所有选中结果
+ * 复制所有选中结果（包含全部选中项，不受渲染数量限制）
  */
 async function copyAllResults() {
-  if (selectedResults.value.length === 0) return
+  if (selectedPaths.value.size === 0) return
 
-  let text = ''
-  if (selectedResults.value.length === 1) {
-    text = selectedResults.value[0].displayValue
-  } else {
-    const obj: Record<string, any> = {}
-    for (const item of selectedResults.value) {
-      obj[item.path] = item.value
-    }
-    text = JSON.stringify(obj, null, 2)
+  if (selectedPaths.value.size === 1) {
+    const path = Array.from(selectedPaths.value)[0]
+    const val = getValueByPath(path)
+    const displayValue = typeof val === 'object' ? JSON.stringify(val, null, 2) : String(val)
+    await copyValue(displayValue)
+    return
   }
 
-  await copyValue(text)
+  const obj: Record<string, any> = {}
+  for (const path of selectedPaths.value) {
+    obj[path] = getValueByPath(path)
+  }
+  await copyValue(JSON.stringify(obj, null, 2))
 }
 
 /**
@@ -380,24 +369,31 @@ function collapseAll() {
 
 /**
  * 全选字段
+ * 有搜索关键词时只选中匹配的字段，无搜索时选中全部
  */
 function selectAll() {
   if (!rootNode.value) return
-  selectedPaths.value = []
+  const newSet = new Set<string>()
+  const kw = searchKeyword.value.trim().toLowerCase()
+
   const collect = (node: FieldNode) => {
-    selectedPaths.value.push(node.path)
+    // 无搜索时全选；有搜索时只选匹配项
+    if (!kw || node.key.toLowerCase().includes(kw) || node.path.toLowerCase().includes(kw)) {
+      newSet.add(node.path)
+    }
     if (node.children) {
       node.children.forEach(collect)
     }
   }
   collect(rootNode.value)
+  selectedPaths.value = newSet
 }
 
 /**
  * 清空选择
  */
 function clearSelection() {
-  selectedPaths.value = []
+  selectedPaths.value = new Set()
 }
 </script>
 
@@ -465,7 +461,7 @@ function clearSelection() {
             <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
               字段结构
               <span v-if="rootNode" class="text-xs text-gray-400 ml-2">
-                已选 {{ selectedPaths.length }}
+                已选 {{ selectedCount }}
               </span>
             </label>
             <div class="flex items-center gap-1">
@@ -486,9 +482,9 @@ function clearSelection() {
               <button
                 @click="selectAll"
                 class="px-2 py-1 text-xs text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors"
-                title="全选"
+                :title="searchKeyword ? '选中所有匹配字段' : '全选'"
               >
-                全选
+                {{ searchKeyword ? '选匹配' : '全选' }}
               </button>
               <button
                 @click="clearSelection"
@@ -570,18 +566,18 @@ function clearSelection() {
           <div class="flex items-center justify-between mb-3">
             <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
               提取结果
-              <span v-if="selectedResults.length > 0" class="text-xs text-gray-400 ml-2">
-                {{ selectedResults.length }} 项
+              <span v-if="selectedCount > 0" class="text-xs text-gray-400 ml-2">
+                {{ selectedCount }} 项<span v-if="hasMoreResults" class="text-orange-400">（显示前 {{ selectedResults.length }}）</span>
               </span>
             </label>
             <button
               @click="copyAllResults"
-              :disabled="selectedResults.length === 0"
+              :disabled="selectedCount === 0"
               :class="[
                 'px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1',
                 copied
                   ? 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400'
-                  : selectedResults.length > 0
+                  : selectedCount > 0
                     ? 'bg-primary-500 text-white hover:bg-primary-600'
                     : 'bg-gray-100 text-gray-400 dark:bg-gray-800 cursor-not-allowed'
               ]"
@@ -593,12 +589,12 @@ function clearSelection() {
           </div>
 
           <div class="h-[580px] overflow-auto border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-dark-200">
-            <div v-if="selectedResults.length === 0" class="h-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm">
+            <div v-if="selectedCount === 0" class="h-full flex items-center justify-center text-gray-400 dark:text-gray-500 text-sm">
               点击左侧字段查看值
             </div>
 
             <!-- 单字段详细预览 -->
-            <div v-else-if="selectedResults.length === 1" class="space-y-3">
+            <div v-else-if="selectedCount === 1" class="space-y-3">
               <div class="flex items-center gap-2 text-xs">
                 <span class="px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-gray-600 dark:text-gray-300 font-mono">
                   {{ selectedResults[0].type }}
@@ -629,6 +625,10 @@ function clearSelection() {
                 <pre class="font-mono text-xs text-gray-800 dark:text-gray-200 whitespace-pre-wrap break-all max-h-24 overflow-auto">
 {{ item.type === 'object' || item.type === 'array' ? item.displayValue : item.displayValue.slice(0, 200) }}</pre>
               </div>
+              <!-- 截断提示 -->
+              <div v-if="hasMoreResults" class="text-center py-2 text-xs text-orange-400">
+                还有 {{ selectedCount - selectedResults.length }} 项未显示，点击「复制」可获取全部结果
+              </div>
             </div>
           </div>
         </div>
@@ -651,9 +651,10 @@ function clearSelection() {
             <h4 class="font-medium text-gray-700 dark:text-gray-300 mb-1">进阶功能</h4>
             <ul class="space-y-1">
               <li>• 搜索框可按字段名或路径过滤</li>
+              <li>• 搜索后点「选匹配」可批量选中匹配字段</li>
               <li>• 支持多选字段，批量提取结果</li>
+              <li>• 选中项过多时列表只显示前 50 项，复制仍包含全部</li>
               <li>• 数组元素可逐个查看</li>
-              <li>• 结果支持一键复制</li>
             </ul>
           </div>
         </div>
