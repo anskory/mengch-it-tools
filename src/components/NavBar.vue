@@ -166,12 +166,15 @@ function toggleSidebar() {
         isCollapsed ? 'h-[64px] justify-center px-2' : 'h-[64px] px-4 gap-3'
       ]"
     >
-      <!-- Logo图片，带暖橙渐变光晕 -->
+      <!-- Logo图片，带主题色渐变光晕 -->
       <div class="relative flex-shrink-0">
+        <!-- 外层光晕 -->
+        <div class="absolute -inset-1 rounded-2xl opacity-40 blur-sm"
+          style="background: linear-gradient(135deg, var(--color-primary-light), var(--color-secondary));"></div>
         <img
           src="/cv.png"
           alt="檬橙IT工具箱"
-          class="w-9 h-9 rounded-xl object-cover cursor-pointer ring-2 ring-primary-400/30"
+          class="relative w-9 h-9 rounded-xl object-cover cursor-pointer border-2 border-bg-card"
           @click="navigateTo('/')"
         />
       </div>
@@ -338,10 +341,8 @@ function toggleSidebar() {
             ]"
           >
             <!-- 主题预览色块 -->
-            <span class="flex gap-1 shrink-0">
-              <span class="w-3 h-3 rounded-full" :style="{ background: opt.isDark ? '#2a1f18' : '#fdf6f0', border: '1px solid rgba(0,0,0,0.1)' }"></span>
-              <span class="w-3 h-3 rounded-full bg-gradient-to-br from-orange-400 to-orange-600"></span>
-            </span>
+            <span class="w-6 h-6 rounded-full shrink-0 ring-2 ring-white/50 dark:ring-white/10"
+              :style="{ background: `linear-gradient(135deg, ${opt.color}, ${opt.color2})` }"></span>
             <span class="flex-1 min-w-0">
               <span class="block text-sm font-medium truncate">{{ opt.label }}</span>
               <span class="block text-[10px] text-gray-400 dark:text-gray-500 truncate">{{ opt.desc }}</span>
