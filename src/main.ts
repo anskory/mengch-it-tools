@@ -9,13 +9,26 @@ import App from './App.vue'
 import router from './router'
 
 // 在Vue应用挂载前初始化主题，避免首屏闪烁
-// 读取localStorage保存的主题偏好，或检测系统主题
+// 读取localStorage保存的主题偏好，兼容旧版 light/dark 值
+const validThemes = ['warm-light', 'warm-dark', 'classic-light', 'classic-dark']
 const savedTheme = localStorage.getItem('theme')
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-const initialTheme = savedTheme === 'dark' || savedTheme === 'light'
-  ? savedTheme
-  : (prefersDark ? 'dark' : 'light')
-document.documentElement.classList.add(initialTheme)
+let initialTheme: string
+
+if (savedTheme && validThemes.includes(savedTheme)) {
+  initialTheme = savedTheme
+} else if (savedTheme === 'light') {
+  initialTheme = 'warm-light'
+} else if (savedTheme === 'dark') {
+  initialTheme = 'warm-dark'
+} else {
+  // 默认使用暖橙浅色主题
+  initialTheme = 'warm-light'
+}
+
+// 设置 data-theme 属性和 dark 类名
+document.documentElement.setAttribute('data-theme', initialTheme)
+const isDark = initialTheme.endsWith('dark')
+document.documentElement.classList.add(isDark ? 'dark' : 'light')
 
 // 创建Vue应用实例，传入根组件
 const app = createApp(App)

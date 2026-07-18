@@ -4,6 +4,121 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ========================================
+   主题系统：通过 data-theme 属性切换 CSS 变量
+   ======================================== */
+
+/* 暖橙·浅色（治愈暖橙 - 默认主题） */
+:root,
+[data-theme="warm-light"] {
+  /* 主色：粉橙渐变 */
+  --color-primary: #f97316;
+  --color-primary-light: #fb923c;
+  --color-primary-dark: #ea580c;
+  --color-primary-bg: #fff0e0;
+  --color-secondary: #fbbf24;
+
+  /* 背景层：米白暖底 */
+  --color-bg-base: #fdf6f0;
+  --color-bg-soft: #faf0e8;
+  --color-bg-card: #ffffff;
+  --color-bg-hover: #fef3e8;
+
+  /* 文字层：暖棕色调 */
+  --color-text-strong: #4a3526;
+  --color-text-base: #6b5444;
+  --color-text-muted: #a08b7a;
+
+  /* 边框 */
+  --color-border: #f0ddd0;
+  --color-border-strong: #e0c4af;
+
+  /* 滚动条 */
+  --color-scrollbar: #e0c4af;
+  --color-scrollbar-hover: #c9a78c;
+}
+
+/* 暖橙·深色（暖夜护眼） */
+[data-theme="warm-dark"] {
+  /* 主色保持粉橙，但稍提亮 */
+  --color-primary: #fb923c;
+  --color-primary-light: #fdba74;
+  --color-primary-dark: #f97316;
+  --color-primary-bg: rgba(251, 146, 60, 0.15);
+  --color-secondary: #fcd34d;
+
+  /* 背景：暖夜深棕 */
+  --color-bg-base: #2a1f18;
+  --color-bg-soft: #322619;
+  --color-bg-card: #3a2d22;
+  --color-bg-hover: #43341f;
+
+  /* 文字：暖白 */
+  --color-text-strong: #fbeee0;
+  --color-text-base: #e6d0bb;
+  --color-text-muted: #b09a85;
+
+  /* 边框 */
+  --color-border: #4a3825;
+  --color-border-strong: #5a4530;
+
+  /* 滚动条 */
+  --color-scrollbar: #5a4530;
+  --color-scrollbar-hover: #7a5e40;
+}
+
+/* 经典·浅色（原蓝灰配色） */
+[data-theme="classic-light"] {
+  --color-primary: #3b82f6;
+  --color-primary-light: #60a5fa;
+  --color-primary-dark: #2563eb;
+  --color-primary-bg: #eff6ff;
+  --color-secondary: #8b5cf6;
+
+  --color-bg-base: #f9fafb;
+  --color-bg-soft: #f3f4f6;
+  --color-bg-card: #ffffff;
+  --color-bg-hover: #f3f4f6;
+
+  --color-text-strong: #1f2937;
+  --color-text-base: #4b5563;
+  --color-text-muted: #9ca3af;
+
+  --color-border: #e5e7eb;
+  --color-border-strong: #d1d5db;
+
+  --color-scrollbar: #cbd5e1;
+  --color-scrollbar-hover: #94a3b8;
+}
+
+/* 经典·深色（原深色配色） */
+[data-theme="classic-dark"] {
+  --color-primary: #60a5fa;
+  --color-primary-light: #93c5fd;
+  --color-primary-dark: #3b82f6;
+  --color-primary-bg: rgba(96, 165, 250, 0.15);
+  --color-secondary: #a78bfa;
+
+  --color-bg-base: #0f172a;
+  --color-bg-soft: #1e293b;
+  --color-bg-card: #1e293b;
+  --color-bg-hover: #334155;
+
+  --color-text-strong: #f8fafc;
+  --color-text-base: #cbd5e1;
+  --color-text-muted: #64748b;
+
+  --color-border: #334155;
+  --color-border-strong: #475569;
+
+  --color-scrollbar: #475569;
+  --color-scrollbar-hover: #64748b;
+}
+
+/* ========================================
+   基础样式
+   ======================================== */
+
 :root {
   font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -17,11 +132,18 @@
 body {
   margin: 0;
   min-height: 100vh;
+  background-color: var(--color-bg-base);
+  color: var(--color-text-base);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #app {
   min-height: 100vh;
 }
+
+/* ========================================
+   滚动条样式
+   ======================================== */
 
 ::-webkit-scrollbar {
   width: 6px;
@@ -33,21 +155,17 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--color-scrollbar);
   border-radius: 3px;
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: #475569;
-}
-
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--color-scrollbar-hover);
 }
 
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
-}
+/* ========================================
+   代码字体
+   ======================================== */
 
 code, pre {
   font-family: 'Roboto Mono', Monaco, Consolas, monospace;
@@ -57,6 +175,10 @@ textarea:focus, input:focus {
   outline: none;
 }
 
+/* ========================================
+   滑块样式（主题色适配）
+   ======================================== */
+
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
@@ -65,7 +187,7 @@ input[type="range"] {
 
 input[type="range"]::-webkit-slider-runnable-track {
   height: 6px;
-  background: #e2e8f0;
+  background: var(--color-border);
   border-radius: 3px;
 }
 
@@ -74,16 +196,22 @@ input[type="range"]::-webkit-slider-thumb {
   appearance: none;
   width: 16px;
   height: 16px;
-  background: #f97316;
+  background: var(--color-primary);
   border-radius: 50%;
   margin-top: -5px;
   cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-.dark input[type="range"]::-webkit-slider-runnable-track {
-  background: #334155;
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
 }
 
-.dark input[type="range"]::-webkit-slider-thumb {
-  background: #fb923c;
+/* ========================================
+   主题切换全局过渡动画
+   ======================================== */
+
+.theme-transition,
+.theme-transition * {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease !important;
 }

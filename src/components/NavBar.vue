@@ -8,14 +8,17 @@ import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
   Sun, Moon, Home, ChevronRight, Sparkles, FileText, Database, Code, QrCode,
-  ChevronDown, ChevronLeft, ChevronRight as ChevronRightIcon, Layers, Table
+  ChevronDown, ChevronLeft, ChevronRight as ChevronRightIcon, Layers, Table, Palette, Check
 } from 'lucide-vue-next'
-import { useTheme } from '@/composables/useTheme'
+import { useTheme, type ThemeMode } from '@/composables/useTheme'
 
 const router = useRouter()
 const route = useRoute()
 // 主题切换功能，从组合式函数获取
-const { theme, toggleTheme } = useTheme()
+const { theme, themeOptions, setTheme } = useTheme()
+
+// 主题选择面板展开状态
+const showThemePanel = ref(false)
 
 // 侧边栏折叠状态
 const isCollapsed = ref(false)
@@ -152,7 +155,7 @@ function toggleSidebar() {
   <!-- 侧边栏主体 -->
   <aside
     :class="[
-      'fixed left-0 top-0 bottom-0 z-50 bg-white dark:bg-dark-100 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 flex flex-col',
+      'fixed left-0 top-0 bottom-0 z-50 bg-bg-card border-r border-gray-200 dark:border-gray-700 transition-all duration-300 flex flex-col',
       isCollapsed ? '-translate-x-full lg:translate-x-0 lg:w-[64px]' : 'w-[240px]'
     ]"
   >
@@ -163,13 +166,15 @@ function toggleSidebar() {
         isCollapsed ? 'h-[64px] justify-center px-2' : 'h-[64px] px-4 gap-3'
       ]"
     >
-      <!-- Logo图片，点击返回首页 -->
-      <img
-        src="/cv.png"
-        alt="檬橙IT工具箱"
-        class="w-8 h-8 rounded-lg object-cover flex-shrink-0 cursor-pointer"
-        @click="navigateTo('/')"
-      />
+      <!-- Logo图片，带暖橙渐变光晕 -->
+      <div class="relative flex-shrink-0">
+        <img
+          src="/cv.png"
+          alt="檬橙IT工具箱"
+          class="w-9 h-9 rounded-xl object-cover cursor-pointer ring-2 ring-primary-400/30"
+          @click="navigateTo('/')"
+        />
+      </div>
       <!-- 应用标题，折叠时隐藏 -->
       <span
         v-if="!isCollapsed"
@@ -183,12 +188,12 @@ function toggleSidebar() {
     <button
       @click="toggleSidebar"
       :class="[
-        'absolute -right-3 top-[74px] w-6 h-6 rounded-full bg-white dark:bg-dark-200 border border-gray-200 dark:border-gray-600 flex items-center justify-center shadow-sm hover:shadow-md transition-all hidden lg:flex',
+        'absolute -right-3 top-[74px] w-6 h-6 rounded-full bg-bg-card border border-gray-200 dark:border-gray-600 flex items-center justify-center shadow-sm hover:shadow-md hover:border-primary-400 transition-all hidden lg:flex',
         isCollapsed ? 'rotate-180' : ''
       ]"
       :title="isCollapsed ? '展开' : '收起'"
     >
-      <ChevronLeft class="w-3 h-3 text-gray-500" />
+      <ChevronLeft class="w-3 h-3 text-primary-500" />
     </button>
 
     <!-- 导航内容区域 -->
@@ -287,25 +292,64 @@ function toggleSidebar() {
     <!-- 底部操作区域 -->
     <div
       :class="[
-        'border-t border-gray-200 dark:border-gray-700',
-        isCollapsed ? 'p-2 flex flex-col items-center gap-2' : 'p-3 flex items-center gap-2'
+        'border-t border-gray-200 dark:border-gray-700 relative',
+        isCollapsed ? 'p-2 flex flex-col items-center gap-2' : 'p-3'
       ]"
     >
-      <!-- 主题切换按钮 -->
+      <!-- 主题选择按钮 -->
       <button
-        @click="toggleTheme"
+        @click="showThemePanel = !showThemePanel"
         :class="[
           'rounded-lg transition-all duration-200 flex items-center',
-          isCollapsed ? 'w-10 h-10 justify-center' : 'px-3 py-2 gap-2 flex-1',
-          'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+          isCollapsed ? 'w-10 h-10 justify-center' : 'px-3 py-2 gap-2 w-full',
+          'text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/20',
+          showThemePanel && 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
         ]"
-        :title="isCollapsed ? (theme === 'light' ? '切换到深色' : '切换到浅色') : ''"
+        :title="isCollapsed ? '主题选择' : ''"
       >
-        <!-- 根据当前主题显示对应的图标 -->
-        <Sun v-if="theme === 'dark'" class="w-5 h-5" />
-        <Moon v-else class="w-5 h-5" />
-        <span v-if="!isCollapsed" class="text-sm">{{ theme === 'light' ? '深色模式' : '浅色模式' }}</span>
+        <Palette class="w-5 h-5" />
+        <span v-if="!isCollapsed" class="text-sm flex-1 text-left">主题</span>
+        <ChevronDown v-if="!isCollapsed" class="w-4 h-4 transition-transform duration-200" :class="showThemePanel ? 'rotate-180' : ''" />
       </button>
+
+      <!-- 主题选择面板 -->
+      <Transition
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="opacity-0 translate-y-2"
+        enter-to-class="opacity-100 translate-y-0"
+        leave-active-class="transition duration-150 ease-in"
+        leave-from-class="opacity-100 translate-y-0"
+        leave-to-class="opacity-0 translate-y-2"
+      >
+        <div
+          v-if="showThemePanel"
+          class="absolute bottom-full left-2 right-2 mb-2 p-2 bg-white dark:bg-dark-100 rounded-xl border border-gray-200 dark:border-gray-700 shadow-xl shadow-black/5 z-50"
+        >
+          <div class="text-xs font-semibold text-gray-400 dark:text-gray-500 px-2 py-1 mb-1">选择主题</div>
+          <button
+            v-for="opt in themeOptions"
+            :key="opt.value"
+            @click="setTheme(opt.value as ThemeMode); showThemePanel = false"
+            :class="[
+              'w-full flex items-center gap-2 px-2 py-2 rounded-lg transition-colors text-left',
+              theme === opt.value
+                ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
+                : 'hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+            ]"
+          >
+            <!-- 主题预览色块 -->
+            <span class="flex gap-1 shrink-0">
+              <span class="w-3 h-3 rounded-full" :style="{ background: opt.isDark ? '#2a1f18' : '#fdf6f0', border: '1px solid rgba(0,0,0,0.1)' }"></span>
+              <span class="w-3 h-3 rounded-full bg-gradient-to-br from-orange-400 to-orange-600"></span>
+            </span>
+            <span class="flex-1 min-w-0">
+              <span class="block text-sm font-medium truncate">{{ opt.label }}</span>
+              <span class="block text-[10px] text-gray-400 dark:text-gray-500 truncate">{{ opt.desc }}</span>
+            </span>
+            <Check v-if="theme === opt.value" class="w-4 h-4 text-primary-500 shrink-0" />
+          </button>
+        </div>
+      </Transition>
     </div>
   </aside>
 
@@ -313,8 +357,8 @@ function toggleSidebar() {
   <button
     v-if="isCollapsed"
     @click="isCollapsed = false"
-    class="fixed top-4 left-4 z-50 lg:hidden w-10 h-10 rounded-lg bg-white dark:bg-dark-100 border border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-md"
+    class="fixed top-4 left-4 z-50 lg:hidden w-10 h-10 rounded-xl bg-bg-card border border-gray-200 dark:border-gray-700 flex items-center justify-center shadow-md text-primary-500"
   >
-    <Layers class="w-5 h-5 text-gray-600 dark:text-gray-300" />
+    <Layers class="w-5 h-5" />
   </button>
 </template>

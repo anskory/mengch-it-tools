@@ -25,30 +25,32 @@ defineProps<Props>()
 </script>
 
 <template>
-  <!-- 工具卡片容器，使用链接形式便于点击跳转 -->
+  <!-- 工具卡片容器：玻璃拟态 + 暖橙渐变光晕 -->
   <a
     :href="path"
-    class="group relative p-6 bg-white dark:bg-dark-100 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-primary-400 dark:hover:border-primary-500 transition-all duration-300 hover:shadow-lg hover:shadow-primary-500/10 hover:-translate-y-1 cursor-pointer"
+    class="group relative p-6 bg-bg-card rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-primary-400 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/15 hover:-translate-y-1 cursor-pointer overflow-hidden"
   >
-    <!-- 悬停时的渐变背景效果 -->
-    <div class="absolute inset-0 bg-gradient-to-br from-primary-500/5 to-secondary-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-    
+    <!-- 悬停时的暖橙渐变背景效果 -->
+    <div class="absolute inset-0 bg-gradient-to-br from-primary-500/8 to-secondary-500/8 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    <!-- 装饰性圆点（手绘感） -->
+    <div class="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-gradient-to-br from-primary-400/20 to-secondary-400/20 blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
+
     <div class="relative">
-      <!-- 图标容器，带有渐变背景 -->
-      <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+      <!-- 图标容器：粉橙渐变 + 柔和阴影 -->
+      <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-lg shadow-primary-500/30">
         <component :is="icon" class="w-6 h-6 text-white" />
       </div>
-      
+
       <!-- 工具标题 -->
       <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
         {{ title }}
       </h3>
-      
+
       <!-- 工具描述 -->
       <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
         {{ description }}
       </p>
-      
+
       <!-- 悬停时显示的"开始使用"提示 -->
       <div class="mt-4 flex items-center text-primary-500 text-sm font-medium opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
         <span>开始使用</span>
