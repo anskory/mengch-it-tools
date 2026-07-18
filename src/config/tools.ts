@@ -8,8 +8,9 @@
  */
 
 import {
-  FileText, Database, Code, QrCode, Table,
-  Sparkles, GitCompare, FileJson, Link, Hash, Calendar
+  FileText, Database, Code, QrCode, Table, Image,
+  Sparkles, GitCompare, FileJson, Link, Hash, Calendar,
+  Regex, Shield, Clock, Palette
 } from 'lucide-vue-next'
 import type { Component } from 'vue'
 
@@ -70,6 +71,14 @@ export const categories: ToolCategory[] = [
         component: '@/pages/text/TextDiff.vue',
         description: '对比两段文本的差异，高亮显示新增、删除和修改的内容',
       },
+      {
+        name: 'regex-tester',
+        label: '正则表达式测试',
+        icon: Regex,
+        path: '/regex-tester',
+        component: '@/pages/text/RegexTester.vue',
+        description: '在线测试正则表达式，高亮匹配结果，支持常用模板',
+      },
     ],
   },
   {
@@ -109,6 +118,14 @@ export const categories: ToolCategory[] = [
         component: '@/pages/data/JsonExplorer.vue',
         description: '解析JSON结构，树形浏览字段，快速提取需要的字段值',
       },
+      {
+        name: 'timestamp-converter',
+        label: '时间戳转换',
+        icon: Clock,
+        path: '/timestamp-converter',
+        component: '@/pages/data/TimestampConverter.vue',
+        description: '时间戳与日期时间格式相互转换，支持秒和毫秒',
+      },
     ],
   },
   {
@@ -123,6 +140,22 @@ export const categories: ToolCategory[] = [
         path: '/url-encoder',
         component: '@/pages/encoding/UrlEncoder.vue',
         description: '对URL进行编码和解码操作，支持完整URL和组件编码',
+      },
+      {
+        name: 'base64',
+        label: 'Base64编码解码',
+        icon: FileJson,
+        path: '/base64',
+        component: '@/pages/encoding/Base64Encoder.vue',
+        description: '对文本进行Base64编码和解码，支持中英文等多字节字符',
+      },
+      {
+        name: 'hash',
+        label: '哈希加密',
+        icon: Shield,
+        path: '/hash',
+        component: '@/pages/encoding/HashEncoder.vue',
+        description: '支持MD5、SHA1、SHA256、SHA512等多种哈希算法',
       },
     ],
   },
@@ -147,6 +180,14 @@ export const categories: ToolCategory[] = [
         component: '@/pages/generate/CrontabGenerator.vue',
         description: '可视化生成Crontab定时任务表达式，支持反解析说明',
       },
+      {
+        name: 'color-picker',
+        label: '颜色选择器',
+        icon: Palette,
+        path: '/color-picker',
+        component: '@/pages/generate/ColorPicker.vue',
+        description: '颜色选择与格式转换，支持HEX/RGB/HSL互转及调色板生成',
+      },
     ],
   },
   {
@@ -161,6 +202,21 @@ export const categories: ToolCategory[] = [
         path: '/in-condition',
         component: '@/pages/db/InConditionGenerator.vue',
         description: '快速生成SQL的IN条件语句，支持多种格式输出',
+      },
+    ],
+  },
+  {
+    id: 'image-tools',
+    label: '图片工具',
+    icon: Image,
+    items: [
+      {
+        name: 'image-compressor',
+        label: '图片压缩',
+        icon: Image,
+        path: '/image-compressor',
+        component: '@/pages/image/ImageCompressor.vue',
+        description: '本地浏览器压缩图片，支持调整质量和尺寸，数据不上传',
       },
     ],
   },
