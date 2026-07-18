@@ -39,6 +39,9 @@ const isHome = computed(() => currentPath.value === '/')
 
 function navigateTo(path: string) {
   router.push(path)
+  if (window.innerWidth < 1024) {
+    isCollapsed.value = true
+  }
 }
 
 function toggleCategory(id: string) {
