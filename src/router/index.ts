@@ -1,31 +1,23 @@
 /**
  * 路由配置文件
  * 定义应用的所有页面路由映射关系
- * 使用Vue Router的HTML5 History模式进行路由管理
+ * 使用 Vue Router 的 HTML5 History 模式进行路由管理
+ *
+ * 采用路由懒加载（动态 import），工具页面按需加载，
+ * 首屏只加载首页代码，进入对应工具页才加载该工具的代码，
+ * 工具越多性能优势越明显。
  */
 
-import { createRouter, createWebHistory } from 'vue-router'
-// 导入各个页面组件
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import HomePage from '@/pages/HomePage.vue'
-import VariableConverter from '@/pages/VariableConverter.vue'
-import TextDiff from '@/pages/TextDiff.vue'
-import JsonBeautify from '@/pages/JsonBeautify.vue'
-import JsonDiff from '@/pages/JsonDiff.vue'
-import JsonEscape from '@/pages/JsonEscape.vue'
-import JsonExplorer from '@/pages/JsonExplorer.vue'
-import QrCode from '@/pages/QrCode.vue'
-import UrlEncoder from '@/pages/UrlEncoder.vue'
-import InConditionGenerator from '@/pages/InConditionGenerator.vue'
-import CrontabGenerator from '@/pages/CrontabGenerator.vue'
 
 /**
  * 路由配置数组
- * 每个路由对象包含:
- * - path: 路由路径
- * - name: 路由名称，用于编程式导航
- * - component: 对应的页面组件
+ *  - 首页：静态引入（首屏需要立即展示）
+ *  - 工具页：使用动态 import 懒加载，访问时才下载代码
+ *    打包时自动拆分成独立 chunk，减小首屏体积
  */
-const routes = [
+const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'home',
@@ -34,59 +26,63 @@ const routes = [
   {
     path: '/variable-converter',
     name: 'variable-converter',
-    component: VariableConverter,
+    component: () => import('@/pages/VariableConverter.vue'),
   },
   {
     path: '/text-diff',
     name: 'text-diff',
-    component: TextDiff,
+    component: () => import('@/pages/TextDiff.vue'),
   },
   {
     path: '/json-beautify',
     name: 'json-beautify',
-    component: JsonBeautify,
+    component: () => import('@/pages/JsonBeautify.vue'),
   },
   {
     path: '/json-diff',
     name: 'json-diff',
-    component: JsonDiff,
+    component: () => import('@/pages/JsonDiff.vue'),
   },
   {
     path: '/json-escape',
     name: 'json-escape',
-    component: JsonEscape,
+    component: () => import('@/pages/JsonEscape.vue'),
   },
   {
     path: '/json-explorer',
     name: 'json-explorer',
-    component: JsonExplorer,
+    component: () => import('@/pages/JsonExplorer.vue'),
   },
   {
     path: '/qr-code',
     name: 'qr-code',
-    component: QrCode,
+    component: () => import('@/pages/QrCode.vue'),
   },
   {
     path: '/url-encoder',
     name: 'url-encoder',
-    component: UrlEncoder,
+    component: () => import('@/pages/UrlEncoder.vue'),
   },
   {
     path: '/in-condition',
     name: 'in-condition',
-    component: InConditionGenerator,
+    component: () => import('@/pages/InConditionGenerator.vue'),
   },
   {
     path: '/crontab',
     name: 'crontab',
-    component: CrontabGenerator,
+    component: () => import('@/pages/CrontabGenerator.vue'),
   },
 ]
 
-// 创建路由实例，使用HTML5 History模式
+// 创建路由实例，使用 HTML5 History 模式
 const router = createRouter({
   history: createWebHistory(),
   routes,
+  // 页面切换时滚动到顶部
+  scrollBehavior() {
+    return { top: 0 }
+  },
 })
 
 export default router
