@@ -28,34 +28,34 @@ defineProps<Props>()
   <!-- 工具卡片容器：玻璃拟态 + 暖橙渐变光晕 -->
   <a
     :href="path"
-    class="group relative p-6 bg-bg-card rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-primary-400 transition-all duration-300 hover:shadow-xl hover:shadow-primary-500/15 hover:-translate-y-1 cursor-pointer overflow-hidden"
+    class="group relative p-4 bg-bg-card rounded-xl border border-gray-200 dark:border-gray-700 hover:border-primary-400 transition-all duration-300 hover:shadow-lg hover:shadow-primary-500/10 hover:-translate-y-0.5 cursor-pointer overflow-hidden"
   >
     <!-- 悬停时的暖橙渐变背景效果 -->
-    <div class="absolute inset-0 bg-gradient-to-br from-primary-500/8 to-secondary-500/8 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-primary-500/8 to-secondary-500/8 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
     <!-- 装饰性圆点（手绘感） -->
-    <div class="absolute -top-6 -right-6 w-20 h-20 rounded-full bg-gradient-to-br from-primary-400/20 to-secondary-400/20 blur-2xl group-hover:scale-150 transition-transform duration-500"></div>
+    <div class="absolute -top-4 -right-4 w-16 h-16 rounded-full bg-gradient-to-br from-primary-400/20 to-secondary-400/20 blur-xl group-hover:scale-150 transition-transform duration-500"></div>
 
     <div class="relative">
       <!-- 图标容器：粉橙渐变 + 柔和阴影 -->
-      <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-lg shadow-primary-500/30">
-        <component :is="icon" class="w-6 h-6 text-white" />
+      <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-md shadow-primary-500/30">
+        <component :is="icon" class="w-5 h-5 text-white" />
       </div>
 
       <!-- 工具标题 -->
-      <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+      <h3 class="text-base font-semibold text-gray-800 dark:text-white mb-1.5 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
         {{ title }}
       </h3>
 
       <!-- 工具描述 -->
-      <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
+      <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed line-clamp-2">
         {{ description }}
       </p>
 
       <!-- 悬停时显示的"开始使用"提示 -->
-      <div class="mt-4 flex items-center text-primary-500 text-sm font-medium opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+      <div class="mt-3 flex items-center text-primary-500 text-xs font-medium opacity-0 group-hover:opacity-100 translate-y-1 group-hover:translate-y-0 transition-all duration-300">
         <span>开始使用</span>
         <!-- 箭头图标 -->
-        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
         </svg>
       </div>
