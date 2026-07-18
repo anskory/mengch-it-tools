@@ -13,9 +13,8 @@
 import { computed } from 'vue'
 import { Sparkles } from 'lucide-vue-next'
 import ToolCard from '@/components/ToolCard.vue'
-import { getAllTools, getToolCount } from '@/config/tools'
+import { categories, getToolCount } from '@/config/tools'
 
-const allTools = getAllTools()
 const toolCount = computed(() => getToolCount())
 </script>
 
@@ -74,17 +73,40 @@ const toolCount = computed(() => getToolCount())
           </p>
         </div>
 
-        <!-- 工具卡片网格：响应式布局 -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- 循环渲染工具卡片 -->
-          <ToolCard
-            v-for="tool in allTools"
-            :key="tool.name"
-            :icon="tool.icon"
-            :title="tool.label"
-            :description="tool.description"
-            :path="tool.path"
-          />
+        <!-- 按分类展示工具 -->
+        <div class="space-y-12">
+          <div
+            v-for="category in categories"
+            :key="category.id"
+            class="scroll-mt-24"
+          >
+            <!-- 分类标题 -->
+            <div class="flex items-center gap-3 mb-6">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/30">
+                <component :is="category.icon" class="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white">
+                  {{ category.label }}
+                </h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                  共 {{ category.items.length }} 个工具
+                </p>
+              </div>
+            </div>
+
+            <!-- 工具卡片网格 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <ToolCard
+                v-for="tool in category.items"
+                :key="tool.name"
+                :icon="tool.icon"
+                :title="tool.label"
+                :description="tool.description"
+                :path="tool.path"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </section>
