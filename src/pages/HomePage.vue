@@ -10,51 +10,13 @@
   创建时间：2024
 -->
 <script setup lang="ts">
-// 引入图标组件，用于工具卡片展示
-import { Code2, GitCompare, FileJson, QrCode, Link, Sparkles } from 'lucide-vue-next'
-// 引入工具卡片组件
+import { computed } from 'vue'
+import { Sparkles } from 'lucide-vue-next'
 import ToolCard from '@/components/ToolCard.vue'
+import { getAllTools, getToolCount } from '@/config/tools'
 
-// 工具列表配置数据
-// 每个工具项包含：图标、标题、描述和路由路径
-const tools = [
-  {
-    icon: Code2,
-    title: '变量名转换',
-    description: '支持驼峰式、下划线式、中划线式等多种命名风格之间的相互转换',
-    path: '/variable-converter',
-  },
-  {
-    icon: GitCompare,
-    title: '文本比较',
-    description: '对比两段文本的差异，高亮显示新增、删除和修改的内容',
-    path: '/text-diff',
-  },
-  {
-    icon: FileJson,
-    title: 'JSON美化',
-    description: '将压缩的JSON格式化为易读的缩进格式，支持自定义缩进',
-    path: '/json-beautify',
-  },
-  {
-    icon: GitCompare,
-    title: 'JSON对比',
-    description: '对比两个JSON对象的差异，支持嵌套结构的深度对比',
-    path: '/json-diff',
-  },
-  {
-    icon: QrCode,
-    title: '二维码生成',
-    description: '将文本或URL转换为二维码图片，支持自定义尺寸和颜色',
-    path: '/qr-code',
-  },
-  {
-    icon: Link,
-    title: 'URL编码解码',
-    description: '对URL进行编码和解码操作，支持完整URL和组件编码',
-    path: '/url-encoder',
-  },
-]
+const allTools = getAllTools()
+const toolCount = computed(() => getToolCount())
 </script>
 
 <template>
@@ -87,7 +49,7 @@ const tools = [
         <!-- 特性标签：工具数量、免费、离线 -->
         <div class="flex flex-wrap justify-center gap-4">
           <div class="px-4 py-2 bg-bg-card rounded-xl border border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400 shadow-sm">
-            <span class="text-primary-500 font-semibold">6+</span> 实用工具
+            <span class="text-primary-500 font-semibold">{{ toolCount }}+</span> 实用工具
           </div>
           <div class="px-4 py-2 bg-bg-card rounded-xl border border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400 shadow-sm">
             <span class="text-primary-500 font-semibold">100%</span> 免费使用
@@ -116,10 +78,10 @@ const tools = [
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <!-- 循环渲染工具卡片 -->
           <ToolCard
-            v-for="tool in tools"
-            :key="tool.title"
+            v-for="tool in allTools"
+            :key="tool.name"
             :icon="tool.icon"
-            :title="tool.title"
+            :title="tool.label"
             :description="tool.description"
             :path="tool.path"
           />

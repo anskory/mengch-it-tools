@@ -4,156 +4,75 @@
  * 支持响应式设计，在移动端和桌面端有不同的展示方式
  */
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
-  Sun, Moon, Home, ChevronRight, Sparkles, FileText, Database, Code, QrCode,
-  ChevronDown, ChevronLeft, ChevronRight as ChevronRightIcon, Layers, Table, Palette, Check
+  Home, ChevronDown, ChevronLeft, Layers, Table, Palette, Check
 } from 'lucide-vue-next'
 import { useTheme, type ThemeMode } from '@/composables/useTheme'
+import { categories as toolCategories } from '@/config/tools'
 
 const router = useRouter()
 const route = useRoute()
-// 主题切换功能，从组合式函数获取
 const { theme, themeOptions, setTheme } = useTheme()
 
-// 主题选择面板展开状态
 const showThemePanel = ref(false)
+const themePanelRef = ref<HTMLElement | null>(null)
+const themeBtnRef = ref<HTMLElement | null>(null)
 
-// 侧边栏折叠状态：移动端默认折叠，桌面端默认展开
 const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024
 const isCollapsed = ref(isMobile)
 
-// 监听窗口大小变化，自动适配移动端
 if (typeof window !== 'undefined') {
   window.addEventListener('resize', () => {
     const nowMobile = window.innerWidth < 1024
-    // 从桌面端切换到移动端时自动折叠
     if (nowMobile && !isMobile) {
       isCollapsed.value = true
     }
   })
 }
 
-// 当前展开的分类ID集合，默认全部展开
-const expandedCategories = ref<Set<string>>(new Set(['text-tools', 'data-tools', 'encoding-tools', 'generate-tools', 'db-tools']))
+const expandedCategories = ref<Set<string>>(new Set(toolCategories.map(c => c.id)))
 
-/**
- * 导航项接口定义
- * @property name - 唯一标识符
- * @property label - 显示标签
- * @property icon - 图标组件
- * @property path - 路由路径
- */
-interface NavItem {
-  name: string
-  label: string
-  icon: any
-  path: string
-}
-
-/**
- * 导航分类接口定义
- * @property id - 分类唯一标识
- * @property label - 分类显示标签
- * @property icon - 分类图标组件
- * @property items - 分类下的导航项数组
- */
-interface NavCategory {
-  id: string
-  label: string
-  icon: any
-  items: NavItem[]
-}
-
-/**
- * 导航分类配置
- * 按功能模块分组，包含文本工具、数据工具、编码工具、生成工具和数据库工具
- */
-const categories: NavCategory[] = [
-  {
-    id: 'text-tools',
-    label: '文本工具',
-    icon: FileText,
-    items: [
-      { name: 'variable-converter', label: '变量名转换', icon: Sparkles, path: '/variable-converter' },
-      { name: 'text-diff', label: '文本比较', icon: Code, path: '/text-diff' },
-    ],
-  },
-  {
-    id: 'data-tools',
-    label: '数据工具',
-    icon: Database,
-    items: [
-      { name: 'json-beautify', label: 'JSON美化', icon: Code, path: '/json-beautify' },
-      { name: 'json-diff', label: 'JSON对比', icon: Code, path: '/json-diff' },
-      { name: 'json-escape', label: 'JSON转义', icon: Code, path: '/json-escape' },
-      { name: 'json-explorer', label: 'JSON字段提取', icon: Code, path: '/json-explorer' },
-    ],
-  },
-  {
-    id: 'encoding-tools',
-    label: '编码工具',
-    icon: Code,
-    items: [
-      { name: 'url-encoder', label: 'URL编码解码', icon: Code, path: '/url-encoder' },
-    ],
-  },
-  {
-    id: 'generate-tools',
-    label: '生成工具',
-    icon: QrCode,
-    items: [
-      { name: 'qr-code', label: '二维码生成', icon: QrCode, path: '/qr-code' },
-      { name: 'crontab', label: 'Crontab生成', icon: Code, path: '/crontab' },
-    ],
-  },
-  {
-    id: 'db-tools',
-    label: '数据库工具',
-    icon: Table,
-    items: [
-      { name: 'in-condition', label: 'IN条件生成', icon: Code, path: '/in-condition' },
-    ],
-  },
-]
-
-// 当前路由路径，用于高亮当前菜单项
 const currentPath = computed(() => route.path)
-
-// 判断是否在首页
 const isHome = computed(() => currentPath.value === '/')
 
-/**
- * 导航到指定路径
- * @param path - 目标路由路径
- */
 function navigateTo(path: string) {
   router.push(path)
 }
 
-/**
- * 切换分类的展开/折叠状态
- * @param id - 分类ID
- */
 function toggleCategory(id: string) {
   const next = new Set(expandedCategories.value)
   if (next.has(id)) {
-    // 如果已展开则折叠
     next.delete(id)
   } else {
-    // 如果已折叠则展开
     next.add(id)
   }
   expandedCategories.value = next
 }
 
-/**
- * 切换侧边栏的折叠状态
- */
 function toggleSidebar() {
   isCollapsed.value = !isCollapsed.value
 }
+
+function handleClickOutside(e: MouseEvent) {
+  if (!showThemePanel.value) return
+  const target = e.target as Node
+  if (
+    themePanelRef.value && !themePanelRef.value.contains(target) &&
+    themeBtnRef.value && !themeBtnRef.value.contains(target)
+  ) {
+    showThemePanel.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside, true)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside, true)
+})
 </script>
 
 <template>
@@ -231,7 +150,7 @@ function toggleSidebar() {
 
       <!-- 工具分类列表 -->
       <div
-        v-for="category in categories"
+        v-for="category in toolCategories"
         :key="category.id"
         class="mt-1"
       >
@@ -313,6 +232,7 @@ function toggleSidebar() {
     >
       <!-- 主题选择按钮 -->
       <button
+        ref="themeBtnRef"
         @click="showThemePanel = !showThemePanel"
         :class="[
           'rounded-lg transition-all duration-200 flex items-center',
@@ -337,6 +257,7 @@ function toggleSidebar() {
         leave-to-class="opacity-0 translate-y-2"
       >
         <div
+          ref="themePanelRef"
           v-if="showThemePanel"
           class="absolute bottom-full left-2 right-2 mb-2 p-2 bg-white dark:bg-dark-100 rounded-xl border border-gray-200 dark:border-gray-700 shadow-xl shadow-black/5 z-50"
         >
