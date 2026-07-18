@@ -73,6 +73,7 @@ const categories: NavCategory[] = [
       { name: 'json-beautify', label: 'JSON美化', icon: Code, path: '/json-beautify' },
       { name: 'json-diff', label: 'JSON对比', icon: Code, path: '/json-diff' },
       { name: 'json-escape', label: 'JSON转义', icon: Code, path: '/json-escape' },
+      { name: 'json-explorer', label: 'JSON字段提取', icon: Code, path: '/json-explorer' },
     ],
   },
   {

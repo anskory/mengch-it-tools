@@ -12,6 +12,7 @@ import TextDiff from '@/pages/TextDiff.vue'
 import JsonBeautify from '@/pages/JsonBeautify.vue'
 import JsonDiff from '@/pages/JsonDiff.vue'
 import JsonEscape from '@/pages/JsonEscape.vue'
+import JsonExplorer from '@/pages/JsonExplorer.vue'
 import QrCode from '@/pages/QrCode.vue'
 import UrlEncoder from '@/pages/UrlEncoder.vue'
 import InConditionGenerator from '@/pages/InConditionGenerator.vue'
@@ -54,6 +55,11 @@ const routes = [
     path: '/json-escape',
     name: 'json-escape',
     component: JsonEscape,
+  },
+  {
+    path: '/json-explorer',
+    name: 'json-explorer',
+    component: JsonExplorer,
   },
   {
     path: '/qr-code',
