@@ -142,7 +142,9 @@ onBeforeUnmount(() => {
           'w-full flex items-center transition-all duration-200',
           isCollapsed ? 'justify-center px-2 py-3' : 'px-4 py-2.5 gap-3',
           isHome
-            ? 'bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400'
+            ? isCollapsed
+              ? 'text-primary-600 dark:text-primary-400'
+              : 'bg-primary-50 text-primary-600 dark:bg-primary-900/20 dark:text-primary-400'
             : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
         ]"
         :title="isCollapsed ? '首页' : ''"
