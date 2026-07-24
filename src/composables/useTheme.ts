@@ -17,10 +17,7 @@ import { ref, watch, computed } from 'vue'
  * 主题类型定义
  */
 export type ThemeMode =
-  | 'warm-light' | 'warm-dark'
-  | 'sakura-light' | 'sakura-dark'
-  | 'mint-light' | 'mint-dark'
-  | 'galaxy-light' | 'galaxy-dark'
+  | 'warm-light' | 'sakura-light' | 'mint-light' | 'galaxy-light'
   | 'classic-light' | 'classic-dark'
 
 /**
@@ -39,16 +36,12 @@ export interface ThemeOption {
 }
 
 export const themeOptions: ThemeOption[] = [
-  { value: 'warm-light', label: '暖橙·浅', desc: '米白底色，粉橙暖意', color: '#f97316', color2: '#fdf6f0', isDark: false },
-  { value: 'warm-dark', label: '暖橙·深', desc: '暖夜底色，粉橙点缀', color: '#fb923c', color2: '#2a1f18', isDark: true },
-  { value: 'sakura-light', label: '樱花·浅', desc: '粉色治愈，少女感', color: '#ec4899', color2: '#fdf2f8', isDark: false },
-  { value: 'sakura-dark', label: '樱花·深', desc: '樱夜紫粉，梦幻感', color: '#f472b6', color2: '#2a1035', isDark: true },
-  { value: 'mint-light', label: '薄荷·浅', desc: '清新自然，护眼舒适', color: '#10b981', color2: '#f0fdf4', isDark: false },
-  { value: 'mint-dark', label: '薄荷·深', desc: '深林静谧，安神放松', color: '#34d399', color2: '#0d2818', isDark: true },
-  { value: 'galaxy-light', label: '星空·浅', desc: '梦幻紫调，二次元感', color: '#8b5cf6', color2: '#f5f3ff', isDark: false },
-  { value: 'galaxy-dark', label: '星空·深', desc: '深紫星空，神秘梦幻', color: '#a78bfa', color2: '#1e1b4b', isDark: true },
-  { value: 'classic-light', label: '经典·浅', desc: '蓝灰配色，清爽简洁', color: '#3b82f6', color2: '#f9fafb', isDark: false },
-  { value: 'classic-dark', label: '经典·深', desc: '深色配色，专注沉浸', color: '#60a5fa', color2: '#0f172a', isDark: true },
+  { value: 'warm-light', label: '暖橙', desc: '粉橙主色，温暖治愈', color: '#f97316', color2: '#fdf6f0', isDark: false },
+  { value: 'sakura-light', label: '樱花', desc: '粉色治愈，少女感', color: '#ec4899', color2: '#fdf2f8', isDark: false },
+  { value: 'mint-light', label: '薄荷', desc: '清新自然，护眼舒适', color: '#10b981', color2: '#f0fdf4', isDark: false },
+  { value: 'galaxy-light', label: '星空', desc: '梦幻紫调，二次元感', color: '#8b5cf6', color2: '#f5f3ff', isDark: false },
+  { value: 'classic-light', label: '经典', desc: '蓝灰配色，清爽简洁', color: '#3b82f6', color2: '#f9fafb', isDark: false },
+  { value: 'classic-dark', label: '夜空', desc: '深色配色，专注沉浸', color: '#60a5fa', color2: '#0f172a', isDark: true },
 ]
 
 /**
@@ -61,9 +54,14 @@ function getPreferredTheme(): ThemeMode {
 
   // 兼容旧版 light/dark
   if (saved === 'light') return 'warm-light'
-  if (saved === 'dark') return 'warm-dark'
+  if (saved === 'dark') return 'classic-dark'
 
-  // 默认使用暖橙浅色
+  // 兼容已移除的深色主题，回退到 classic-dark
+  if (saved && (saved.endsWith('-dark') || saved === 'warm-dark' || saved === 'sakura-dark' || saved === 'mint-dark' || saved === 'galaxy-dark')) {
+    return 'classic-dark'
+  }
+
+  // 默认使用暖橙
   return 'warm-light'
 }
 
@@ -99,11 +97,13 @@ export function useTheme() {
     theme.value = t
   }
 
-  /** 在浅色/深色之间快速切换（保留当前色系） */
+  /** 在浅色/深色之间快速切换 */
   const toggleTheme = () => {
-    const isDark = theme.value.endsWith('dark')
-    const base = theme.value.replace(/-dark$|-light$/, '')
-    theme.value = isDark ? `${base}-light` as ThemeMode : `${base}-dark` as ThemeMode
+    if (theme.value === 'classic-dark') {
+      theme.value = 'classic-light'
+    } else {
+      theme.value = 'classic-dark'
+    }
   }
 
   return {

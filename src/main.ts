@@ -11,10 +11,7 @@ import router from './router'
 // 在Vue应用挂载前初始化主题，避免首屏闪烁
 // 读取localStorage保存的主题偏好，兼容旧版 light/dark 值
 const validThemes = [
-  'warm-light', 'warm-dark',
-  'sakura-light', 'sakura-dark',
-  'mint-light', 'mint-dark',
-  'galaxy-light', 'galaxy-dark',
+  'warm-light', 'sakura-light', 'mint-light', 'galaxy-light',
   'classic-light', 'classic-dark'
 ]
 const savedTheme = localStorage.getItem('theme')
@@ -25,9 +22,9 @@ if (savedTheme && validThemes.includes(savedTheme)) {
 } else if (savedTheme === 'light') {
   initialTheme = 'warm-light'
 } else if (savedTheme === 'dark') {
-  initialTheme = 'warm-dark'
+  initialTheme = 'classic-dark'
 } else {
-  // 默认使用暖橙浅色主题
+  // 默认使用暖橙主题
   initialTheme = 'warm-light'
 }
 

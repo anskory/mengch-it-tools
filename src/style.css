@@ -38,35 +38,6 @@
   --color-scrollbar-hover: #c9a78c;
 }
 
-/* 暖橙·深色（暖夜护眼） */
-[data-theme="warm-dark"] {
-  /* 主色保持粉橙，但稍提亮 */
-  --color-primary: #fb923c;
-  --color-primary-light: #fdba74;
-  --color-primary-dark: #f97316;
-  --color-primary-bg: rgba(251, 146, 60, 0.15);
-  --color-secondary: #fcd34d;
-
-  /* 背景：暖夜深棕 */
-  --color-bg-base: #2a1f18;
-  --color-bg-soft: #322619;
-  --color-bg-card: #3a2d22;
-  --color-bg-hover: #43341f;
-
-  /* 文字：暖白 */
-  --color-text-strong: #fbeee0;
-  --color-text-base: #e6d0bb;
-  --color-text-muted: #b09a85;
-
-  /* 边框 */
-  --color-border: #4a3825;
-  --color-border-strong: #5a4530;
-
-  /* 滚动条 */
-  --color-scrollbar: #5a4530;
-  --color-scrollbar-hover: #7a5e40;
-}
-
 /* 经典·浅色（原蓝灰配色） */
 [data-theme="classic-light"] {
   --color-primary: #3b82f6;
@@ -91,7 +62,7 @@
   --color-scrollbar-hover: #94a3b8;
 }
 
-/* 经典·深色（原深色配色） */
+/* 经典·深色（夜空） */
 [data-theme="classic-dark"] {
   --color-primary: #60a5fa;
   --color-primary-light: #93c5fd;
@@ -139,30 +110,6 @@
   --color-scrollbar-hover: #ec4899;
 }
 
-/* 樱花粉·深色（樱夜色，紫粉交织） */
-[data-theme="sakura-dark"] {
-  --color-primary: #f472b6;
-  --color-primary-light: #f9a8d4;
-  --color-primary-dark: #ec4899;
-  --color-primary-bg: rgba(236, 72, 153, 0.15);
-  --color-secondary: #c084fc;
-
-  --color-bg-base: #2a1035;
-  --color-bg-soft: #3b1745;
-  --color-bg-card: #451b55;
-  --color-bg-hover: #5a246b;
-
-  --color-text-strong: #fce7f3;
-  --color-text-base: #f9a8d4;
-  --color-text-muted: #ec4899;
-
-  --color-border: #5a246b;
-  --color-border-strong: #7c3a9e;
-
-  --color-scrollbar: #7c3a9e;
-  --color-scrollbar-hover: #a855f7;
-}
-
 /* 薄荷绿·浅色（清新自然，护眼舒适） */
 [data-theme="mint-light"] {
   --color-primary: #10b981;
@@ -187,30 +134,6 @@
   --color-scrollbar-hover: #10b981;
 }
 
-/* 薄荷绿·深色（深林绿，静谧安神） */
-[data-theme="mint-dark"] {
-  --color-primary: #34d399;
-  --color-primary-light: #6ee7b7;
-  --color-primary-dark: #10b981;
-  --color-primary-bg: rgba(16, 185, 129, 0.15);
-  --color-secondary: #2dd4bf;
-
-  --color-bg-base: #0d2818;
-  --color-bg-soft: #143524;
-  --color-bg-card: #1a4030;
-  --color-bg-hover: #234d3a;
-
-  --color-text-strong: #ecfdf5;
-  --color-text-base: #a7f3d0;
-  --color-text-muted: #34d399;
-
-  --color-border: #234d3a;
-  --color-border-strong: #166534;
-
-  --color-scrollbar: #166534;
-  --color-scrollbar-hover: #047857;
-}
-
 /* 星空紫·浅色（梦幻渐变，二次元感） */
 [data-theme="galaxy-light"] {
   --color-primary: #8b5cf6;
@@ -233,30 +156,6 @@
 
   --color-scrollbar: #c4b5fd;
   --color-scrollbar-hover: #8b5cf6;
-}
-
-/* 星空紫·深色（深紫星空，神秘梦幻） */
-[data-theme="galaxy-dark"] {
-  --color-primary: #a78bfa;
-  --color-primary-light: #c4b5fd;
-  --color-primary-dark: #8b5cf6;
-  --color-primary-bg: rgba(139, 92, 246, 0.15);
-  --color-secondary: #60a5fa;
-
-  --color-bg-base: #1e1b4b;
-  --color-bg-soft: #312e81;
-  --color-bg-card: #3730a3;
-  --color-bg-hover: #4338ca;
-
-  --color-text-strong: #ede9fe;
-  --color-text-base: #c4b5fd;
-  --color-text-muted: #a78bfa;
-
-  --color-border: #4338ca;
-  --color-border-strong: #4f46e5;
-
-  --color-scrollbar: #4f46e5;
-  --color-scrollbar-hover: #6366f1;
 }
 
 /* ========================================
