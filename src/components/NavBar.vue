@@ -89,7 +89,7 @@ onBeforeUnmount(() => {
   <!-- 侧边栏主体 -->
   <aside
     :class="[
-      'fixed left-0 top-0 bottom-0 z-50 bg-bg-card border-r border-gray-200 dark:border-gray-700 transition-all duration-300 flex flex-col',
+      'fixed left-0 top-0 bottom-0 z-50 bg-bg-card border-r border-gray-200 dark:border-gray-700 transition-all duration-300 flex flex-col overflow-hidden',
       isCollapsed ? '-translate-x-full lg:translate-x-0 lg:w-[64px]' : 'w-[240px]'
     ]"
   >
